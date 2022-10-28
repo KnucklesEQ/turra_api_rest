@@ -1,0 +1,120 @@
+API y APIs REST - Turra Nevian (17/10/2022)
+
+1 - Definición de API
+
+API == Application Programming Interface 
+La clave #1: It's a way for two or more computer programs to communicate with each other (la gracia es que los programas puedan ser creados con lenguajes diferentes).
+La clave #2: Other purpose of APIs is to hide the internal details of how a system works (clásico concepto de "abstracción").
+
+1.1 - Conceptos básicos
+
+	- "API specification": Document or standard that describes how to build/use the interface.
+	- "Implement an API" or "expose an API": si el software cumple la API specification (NOTA: cuando se habla de simplemente "API" nos referimos a esto).
+	- The calls that make up the API are also known as subroutines, methods, requests, or endpoints (sinónimos).
+
+
+2 - Historia de APIs
+
+	- 40s y 50s --> Ya se utilizaba el concepto (comunicación entre software variado), aunque aún no se le había puesto nombre.
+	- 60s y 70s --> El uso de APIs es habitual y extendido, aunque todavía sin el nombre API. Usos principales: comunicación con el sistema operativo (la idea es que se pudiese acceder a las funciones del sistema operativo desde distintos lenguajes de programación), bases de datos (capa sobre los SGBD que simplificaba su uso), etc.
+	- Principios 90s --> Se crea formalmente el término API y se usa ampliamente. Ejemplo práctico: JDBC API (Java DataBase Connectivity API), mismas llamadas permiten realizar la misma función independientemente de la base de datos utilizada.
+	- Mediados 90s --> Irrupción de Internet, aparece el concepto de servicio web y, por ende, el de web API --> Primeros estándares: CORBA (inspirado en OO), COM (by Microsoft), DCOM (extensión del anterior, by MS, propietario).
+	- 2000s --> El señor Roy Fielding propone (en su tesis doctoral) REST, lo define como "network-based Application Programming Interface" (pensada para web) --> XML y JSON se establecen como formatos para la transferencia de datos.
+	- Actualidad --> Se mantiene REST casi como estándar --> Se usa "API" casi como sinónimo de "web API".
+
+
+3 - APIs remotas o web APIs
+
+	- Web APIs are a service accessed from client devices (Mobile Phones, Laptop, etc.) to a web server using the Hypertext Transfer Protocol (HTTP). 
+	- Client devices send a request in the form of an HTTP request, and are met with a response message usually in JSON or XML format. 
+	- Developers typically use Web APIs to query a server for a specific set of data from that server.
+
+
+4 - Tipos: SOAP, REST (RESTful) y otras
+
+	- Aclaraciones a comentar durante la explicación:
+		- "SOAP is a protocol whereas REST is an architectural pattern".
+		- Así como REST es el estilo de Arquitectura, RESTful es la implementación de dicha arquitectura. 
+
+	- SOAP: "Simple Object Access Protocol"
+		- Funciona por lo general por el protocolo HTTP, pero no está limitado a él (FTP, POP3, TCP...).
+		- Robusto. De tipado fuerte (definido en cada implementación, cada API SOAP puede ser muy diferente a otras). Sólo permite usar XML. Más pesado.
+		- Ejemplo Request SOAP:
+
+		<?xml version="1.0" encoding="utf-8"?>
+		<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+ 			<soap:Body>
+  				<IsValidISBN10 xmlns="http://webservices.daehosting.com/ISBN">
+   					<sISBN>0-19-852663-6</sISBN>
+  				</IsValidISBN10>
+ 			</soap:Body>
+		</soap:Envelope>
+
+		- Ejemplo Response SOAP:
+
+		<?xml version="1.0" encoding="utf-8"?>
+		<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  			<soap:Body>
+    			<m:IsValidISBN10Response xmlns:m="http://webservices.daehosting.com/ISBN">
+         			<m:IsValidISBN10Result>true</m:IsValidISBN10Result>
+      			</m:IsValidISBN10Response>
+   			</soap:Body>
+		</soap:Envelope>
+
+
+	- REST: "REpresentational State Transfer"
+		- Si bien transporta datos sólo por medio del protocolo HTTP, permite utilizar los diversos métodos que proporciona HTTP para comunicarse (GET, POST, PUT, DELETE, PATCH...) y, a la vez, utiliza los códigos de respuesta nativos de HTTP (404,200,204,409, etc).
+		- Permite transportar cualquier tipo de datos (se suele usar JSON, ya que JSON es interpretado de forma natural por JavaScript).
+		- Es patrón de API más utilizado: es simple y las interfaces son uniformes --> Facilita enormemente al desarrollador entender el funcionamiento de una API, ya que todas se montan de forma similar.
+
+	- Hay más tipos de APIs:
+		--> GraphQL: en vez de trabajar con endpoints, puede pedir información concreta. By Facebook.
+		--> WebSocket API: websocket permite comunicación bidireccional, en vez de HTTP.
+		--> gRPC: Remote Procedure Call; by Google.
+
+
+5 - Adentrándonos en REST
+
+	- La idea del señor Roy Fielding fue la siguiente: en navegadores web se utilizan de siempre las URL (Universal Resource Locator) para acceder a contenido específico de una página web. Utilicémoslo.
+	- REST es una forma estandarizada de proveer recursos de todo tipo a desarrolladores. 
+	- REST ayuda de esta forma a organizar recursos y a definir las operaciones que se pueden realizar sobre dichos recursos. Y ya.
+
+	- Ejemplo con Facebook:
+		GET https://www.facebook.com/pabloinsua/ <--- Representación HTML del recurso ("yo" soy un recurso)
+
+		GET https://graph.facebook.com/v7.0/me <--- Representación JSON del recurso (usa el token de sesión)
+
+		Muchas más herramientas: 
+		    Comments: GET https://graph.facebook.com/v7.0/comments
+		    Friends: GET https://graph.facebook.com/v7.0/friends
+		    Images: GET https://graph.facebook.com/v7.0/images
+		    Links: GET https://graph.facebook.com/v7.0/links
+		    Likes: GET https://graph.facebook.com/v7.0/likes
+		    Location: GET https://graph.facebook.com/v7.0/locations
+		    Messages: GET https://graph.facebook.com/v7.0/messages
+		    Notifications: GET https://graph.facebook.com/v7.0/notifications
+		    Pages: GET https://graph.facebook.com/v7.0/pages
+		    Payments: GET https://graph.facebook.com/v7.0/payments
+		    Share: GET https://graph.facebook.com/v7.0/share
+		    Posts: GET https://graph.facebook.com/v7.0/posts
+		    Places: GET https://graph.facebook.com/v7.0/places
+		    Videos: GET https://graph.facebook.com/v7.0/videos
+
+		Y para modificar cualquier cosa, sencillo:
+		    GET: https://graph.facebook.com/v7.0/images
+		    POST: https://graph.facebook.com/v7.0/images
+		    PUT: https://graph.facebook.com/v7.0/images
+		    DELETE: https://graph.facebook.com/v7.0/images
+
+	- REST isn’t a specification; it is simply an architectural style to consider as you plan each API. 
+	- Qué hace a una API que sea REST:
+		1 - Interfaz uniforme --> Todas las solicitudes de API para el mismo recurso deben ser iguales, independientemente de la procedencia de la solicitud.
+		2 - Desacoplamiento del cliente-servidor --> La única información que la aplicación de cliente debe conocer es el URI del recurso solicitado. El servidor nunca modifica la aplicación cliente.
+		3 - Sin estado --> Cada solicitud debe incluir toda la información necesaria para procesarla.
+		4 - Capacidad de almacenamiento en memoria caché --> Siempre que sea posible, los recursos deben poder almacenarse en la memoria caché en el lado del cliente o el servidor.
+		5 - Arquitectura del sistema en capas --> Puede haber diferentes capas (varias APIs intercaladas). En cualquier caso, las API REST deben diseñarse para que ni el cliente ni el servidor puedan reconocer si se comunican con la aplicación final o con un intermediario.
+		6 - Código bajo demanda (opcional) --> Además de recursos las APIs pueden devolver código ejecutable (applets Java, por ejemplo).
+
+	- La definición previa es muy genérica. ¿De dónde viene entonces toda la "religión" de muchos devs para pelearse sobre si una API determinada es "realmente REST" o no?
+	- Hay diferentes especificaciones (una especie de "mejores prácticas") que son más o menos estrictas. Una de las más famosas es OpenAPI.
+	- OpenAPI establece: una interfaz para describir una API de forma que permita a cualquier desarrollador o aplicación descubrirla y comprender completamente sus parámetros y capacidades: puntos finales disponibles, operaciones permitidas en cada punto final, parámetros de operación, métodos de autenticación y otra información.
